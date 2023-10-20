@@ -10,14 +10,10 @@ import lombok.Data;
 @Data @AllArgsConstructor
 public class SuccessResponseDto {
 
-    @Schema(
-            description="Status code of a successful response"
-    )
+    @Schema(description="Status code of a successful response")
     private String statusCode;
 
-    @Schema(
-            description="Status message of a successful response"
-    )
+    @Schema(description="Status message of a successful response")
     private String statusMsg;
 
 }

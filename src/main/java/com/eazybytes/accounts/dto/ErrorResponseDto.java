@@ -13,24 +13,16 @@ import java.time.LocalDateTime;
 @Data @AllArgsConstructor
 public class ErrorResponseDto {
 
-    @Schema(
-            description="API path invoked by client"
-    )
+    @Schema(description="API path invoked by client")
     private String apiPath;
 
-    @Schema(
-            description="Response error code"
-    )
+    @Schema(description="Response error code")
     private HttpStatus errorCode;
 
-    @Schema(
-            description="Response error message"
-    )
+    @Schema(description="Response error message")
     private String errorMessage;
 
-    @Schema(
-            description="Date and time of the response error"
-    )
+    @Schema(description="Date and time of the response error")
     private LocalDateTime errorTime;
 
 }
