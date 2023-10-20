@@ -3,7 +3,7 @@ package com.eazybytes.accounts.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;clear
+import lombok.Data;
 
 @Schema(
         name="Accounts",
