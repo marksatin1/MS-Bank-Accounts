@@ -3,7 +3,8 @@ package com.eazybytes.accounts.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
+import lombok.Data;clear
+
 @Schema(
         name="Accounts",
         description="Schema to hold bank account data"
