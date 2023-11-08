@@ -95,7 +95,7 @@
 				<version>3.3.2</version>
 				<configuration>
 					<to>
-						<image>marksatin1/${project.artifactId}:s8</image>
+						<image>marksatin1/${project.artifactId}:s9</image>
 					</to>
 				</configuration>
 			</plugin>
