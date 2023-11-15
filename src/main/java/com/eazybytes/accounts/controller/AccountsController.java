@@ -6,6 +6,8 @@ import com.eazybytes.accounts.dto.CustomerDto;
 import com.eazybytes.accounts.dto.ErrorResponseDto;
 import com.eazybytes.accounts.dto.SuccessResponseDto;
 import com.eazybytes.accounts.service.IAccountsService;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,13 +16,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeoutException;
 
 @Tag(
         name = "CRUD endpoints for the Accounts microservice",
@@ -31,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class AccountsController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AccountsController.class);
     private final IAccountsService iAccountsService;
 
     public AccountsController(IAccountsService iAccountsService) {
@@ -39,6 +47,9 @@ public class AccountsController {
 
     @Value("${build.version}")
     private String buildVersion;
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private AccountsContactInfoDto accountsContactInfoDto;
@@ -181,12 +192,37 @@ public class AccountsController {
             )
     }
     )
+    @Retry(name = "getBuildInfo", fallbackMethod = "getBuildInfoFallback")
     @GetMapping("/build-info")
-    public ResponseEntity<String> getBuildInfo() {
+    public ResponseEntity<String> getBuildInfo() throws TimeoutException {
+        logger.debug("getBuildInfo() method invoked");
+        throw new TimeoutException();
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(buildVersion);
+    }
+
+    public ResponseEntity<String> getBuildInfoFallback(Throwable throwable) {
+        logger.debug("getBuildInfoFallback() method invoked");
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(buildVersion);
+                .body("0.9");
     }
+
+    @RateLimiter(name = "getJavaVersion", fallbackMethod = "getJavaVersionFallback")
+    @GetMapping("/java-version")
+    public ResponseEntity<String> getJavaVersion() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(environment.getProperty("JAVA_HOME"));
+    }
+
+    public ResponseEntity<String> getJavaVersionFallback(Throwable throwable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Java 17");
+    }
+
     @Operation(
             summary = "Get contact info for Accounts MS",
             description = "Get contact info details if there are any issues with Accounts MS codebase"
